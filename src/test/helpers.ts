@@ -4,7 +4,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import type { TestApi } from "../extension";
 
-export const EXTENSION_ID = "svenzhao.codegraph-auto-mcp";
+export const EXTENSION_ID = "bsantos.codegraph-mcp";
 
 export async function getApi(): Promise<TestApi> {
   const ext = vscode.extensions.getExtension<TestApi | undefined>(EXTENSION_ID);

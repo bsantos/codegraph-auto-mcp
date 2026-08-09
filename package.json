@@ -1,10 +1,10 @@
 {
-  "name": "codegraph-auto-mcp",
-  "displayName": "CodeGraph Auto MCP",
+  "name": "codegraph-mcp",
+  "displayName": "CodeGraph MCP",
   "description": "Auto-registers CodeGraph MCP server for GitHub Copilot, with project init & re-index support",
-  "version": "0.0.31",
+  "version": "1.0.0",
   "icon": "images/logo.png",
-  "publisher": "svenzhao",
+  "publisher": "bsantos",
   "license": "MIT",
   "engines": {
     "vscode": "^1.106.0"
@@ -85,8 +85,9 @@
     "pretest": "npm run compile-tests && npm run build",
     "test": "vscode-test",
     "vscode:prepublish": "npm run build",
+    "package": "vsce package --no-dependencies",
     "release": "standard-version",
-    "publish": "npm run release && vsce publish"
+    "publish": "npm run release && vsce publish --no-dependencies"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -94,6 +95,7 @@
     "@types/vscode": "^1.106.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^3.9.2",
     "esbuild": "^0.25.0",
     "standard-version": "^9.5.0",
     "typescript": "^5.7.0"
