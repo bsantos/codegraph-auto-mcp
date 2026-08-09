@@ -81,13 +81,19 @@
     "build": "esbuild src/extension.ts --bundle --minify --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node18",
     "watch": "esbuild src/extension.ts --bundle --sourcemap --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node18 --watch",
     "check": "tsc --noEmit",
+    "compile-tests": "tsc -p .",
+    "pretest": "npm run compile-tests && npm run build",
+    "test": "vscode-test",
     "vscode:prepublish": "npm run build",
     "release": "standard-version",
     "publish": "npm run release && vsce publish"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.106.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
     "esbuild": "^0.25.0",
     "standard-version": "^9.5.0",
     "typescript": "^5.7.0"

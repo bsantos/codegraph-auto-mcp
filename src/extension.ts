@@ -18,13 +18,22 @@ let _transientTimer: ReturnType<typeof setTimeout> | undefined;
 let _initInProgress = false;
 let _syncInProgress = false;
 
+/** Returned from activate() outside production only, so integration tests can drive internals. */
+export interface TestApi {
+  codegraphCmd(): string;
+  runCli(args: string[], options?: RunOptions): Promise<RunResult>;
+  isCliMissing(err: unknown): boolean;
+  refreshStatus(): Promise<void>;
+  getStatus(): Status;
+}
+
 /** The command to launch codegraph — either the user's custom path or just "codegraph". */
 function codegraphCmd(): string {
   const cfg = vscode.workspace.getConfiguration("codegraph").get<string>("path");
   return cfg?.trim() || "codegraph";
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): TestApi | undefined {
   _extensionVersion = context.extension.packageJSON.version ?? "0.0.0";
   _root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
@@ -57,6 +66,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   setStatus(_root ? "unknown" : "no-workspace");
   if (_root) { void refreshStatus(); }
+
+  if (context.extensionMode === vscode.ExtensionMode.Production) { return undefined; }
+  return { codegraphCmd, runCli, isCliMissing, refreshStatus, getStatus: () => _status };
 }
 
 function setStatus(status: Status) {
@@ -167,7 +179,7 @@ function refreshMcpDefinitions() {
   _mcpChangeEmitter?.fire();
 }
 
-interface RunOptions {
+export interface RunOptions {
   /** Mirror the child's output into the CodeGraph output channel. */
   log?: boolean;
   /** Keep stdout in memory (only needed when the caller parses it). */
@@ -176,7 +188,7 @@ interface RunOptions {
   token?: vscode.CancellationToken;
 }
 
-interface RunResult {
+export interface RunResult {
   code: number | null;
   stdout: string;
   stderr: string;
