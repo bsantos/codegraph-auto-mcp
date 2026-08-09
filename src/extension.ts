@@ -38,7 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
   _root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   if (!_root) {
     _statusBar.text = "$(warning) CodeGraph: No workspace";
-    _statusBar.tooltip = "未打开工作区";
+    _statusBar.tooltip = "No workspace opened";
     _statusBar.show();
     return;
   }
@@ -93,7 +93,7 @@ function doRegisterMcp() {
   const isInitialized = fs.existsSync(path.join(_root, ".codegraph"));
   if (isInitialized) {
     _statusBar.text = "$(check) CodeGraph: Ready";
-    _statusBar.tooltip = "CodeGraph MCP 已注册";
+    _statusBar.tooltip = "CodeGraph MCP registered";
     _statusBar.command = "codegraph.showMenu";
     _statusBar.backgroundColor = undefined;
     _statusBar.show();
@@ -116,7 +116,7 @@ async function refreshInitStatus() {
     const result = JSON.parse(stdout);
     if (!result.initialized) {
       _statusBar.text = "$(info) CodeGraph: Not initialized";
-      _statusBar.tooltip = "项目未初始化，点击查看操作菜单";
+      _statusBar.tooltip = "Project not initialized — click to open the actions menu";
       _statusBar.command = "codegraph.showMenu";
       _statusBar.backgroundColor = new vscode.ThemeColor(
         "statusBarItem.warningBackground"
@@ -132,7 +132,7 @@ async function doRestart() {
   _mcpDisposable?.dispose();
   _mcpChangeEmitter?.dispose();
   doRegisterMcp();
-  vscode.window.showInformationMessage("CodeGraph: MCP 服务器已重启");
+  vscode.window.showInformationMessage("CodeGraph: MCP server restarted");
 }
 
 async function doInit() {
@@ -157,13 +157,13 @@ async function doInit() {
       _initTerminal = undefined;
       await new Promise(r => setTimeout(r, 1000));
       _statusBar.text = "$(check) CodeGraph: Initialized";
-      _statusBar.tooltip = "正在注册 MCP...";
+      _statusBar.tooltip = "Registering MCP...";
       _statusBar.show();
       const action = await vscode.window.showInformationMessage(
-        "CodeGraph: 项目已初始化，是否注册 MCP？",
-        "注册"
+        "CodeGraph: Project initialized. Register MCP?",
+        "Register"
       );
-      if (action === "注册") {
+      if (action === "Register") {
         doRegisterMcp();
       }
     }
@@ -190,10 +190,10 @@ async function doSync() {
       });
     });
     _statusBar.text = "$(check) CodeGraph: Synced";
-    vscode.window.showInformationMessage("CodeGraph: 索引已更新");
+    vscode.window.showInformationMessage("CodeGraph: Index updated");
   } catch (err: any) {
     _statusBar.text = "$(error) CodeGraph: Sync failed";
-    vscode.window.showErrorMessage(`CodeGraph: sync 失败 - ${err.message}`);
+    vscode.window.showErrorMessage(`CodeGraph: sync failed - ${err.message}`);
   }
   setTimeout(() => {
     const cur = _statusBar.text;
@@ -205,12 +205,12 @@ async function doSync() {
 
 async function doShowMenu() {
   const items: vscode.QuickPickItem[] = [
-    { label: "$(sync) Restart MCP Server", description: "重新注册 MCP" },
-    { label: "$(repo) Initialize Project", description: "运行 codegraph init" },
-    { label: "$(refresh) Force Re-index", description: "强制重新索引" },
+    { label: "$(sync) Restart MCP Server", description: "Re-register MCP" },
+    { label: "$(repo) Initialize Project", description: "Run codegraph init" },
+    { label: "$(refresh) Force Re-index", description: "Force a full re-index" },
   ];
   const picked = await vscode.window.showQuickPick(items, {
-    placeHolder: "CodeGraph 操作",
+    placeHolder: "CodeGraph actions",
   });
   if (!picked) { return; }
   if (picked.label.includes("Restart")) {

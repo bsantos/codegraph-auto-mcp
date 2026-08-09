@@ -1,7 +1,5 @@
 # CodeGraph Auto MCP
 
-> **Languages**: [English](README.md) | [中文 (Chinese)](README.zh-CN.md)
-
 Give GitHub Copilot **deep structural understanding** of your codebase — not just text search, but AST-level code intelligence via [CodeGraph](https://github.com/svenzhao/codegraph) MCP.
 
 This extension auto-registers the CodeGraph MCP server for Copilot. No manual `mcp.json` editing, no path headaches, no config files to maintain.
@@ -10,7 +8,7 @@ This extension auto-registers the CodeGraph MCP server for Copilot. No manual `m
 
 ```bash
 # 1. Install CodeGraph CLI
-npm install -g @sven/codegraph
+npm install -g @colbymchenry/codegraph
 ```
 
 ```
