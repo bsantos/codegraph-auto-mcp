@@ -64,17 +64,23 @@
         "codegraph.path": {
           "type": "string",
           "default": "",
+          "scope": "machine",
           "markdownDescription": "Manually specify the full path to the codegraph CLI. Leave empty to auto-detect.\n\nIf set and executable, the automatic lookup is skipped."
         }
       }
     }
   },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "CodeGraph runs the codegraph CLI against the workspace contents."
+    }
+  },
   "scripts": {
     "compile": "npm run check && npm run build",
     "build": "esbuild src/extension.ts --bundle --minify --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node18",
-    "watch": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node18 --watch",
+    "watch": "esbuild src/extension.ts --bundle --sourcemap --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node18 --watch",
     "check": "tsc --noEmit",
-    "lint": "tsc --noEmit",
     "vscode:prepublish": "npm run build",
     "release": "standard-version",
     "publish": "npm run release && vsce publish"
