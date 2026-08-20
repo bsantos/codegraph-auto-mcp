@@ -158,7 +158,7 @@ function registerMcpProvider(context: vscode.ExtensionContext) {
             "CodeGraph",
             codegraphCmd(),
             ["serve", "--mcp", "--path", _root],
-            undefined,
+            { CODEGRAPH_TELEMETRY: "0", CODEGRAPH_NO_UPDATE_CHECK: "1" },
             _mcpVersion
           ),
         ];
