@@ -2,7 +2,7 @@
   "name": "codegraph-mcp",
   "displayName": "CodeGraph MCP",
   "description": "Auto-registers CodeGraph MCP server for GitHub Copilot, with project init & re-index support",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "icon": "images/logo.png",
   "publisher": "bsantos",
   "license": "MIT",
@@ -46,6 +46,10 @@
       {
         "command": "codegraph.sync",
         "title": "CodeGraph: Force Re-index"
+      },
+      {
+        "command": "codegraph.installCli",
+        "title": "CodeGraph: Install CLI v1.5.0 (Recommended)"
       },
       {
         "command": "codegraph.showMenu",

@@ -7,8 +7,9 @@ This extension auto-registers the CodeGraph MCP server for Copilot. No manual `m
 ## ⚡ Quick Start
 
 ```bash
-# 1. Install CodeGraph CLI
+# 1. Install CodeGraph CLI — globally:
 npm install -g @colbymchenry/codegraph
+#    (or use the extension's built-in local install, pinned to v1.5.0)
 ```
 
 ```
@@ -34,6 +35,7 @@ The result: more accurate answers, fewer hallucinated APIs, and edits that actua
 ## Features
 
 - 🚀 **Zero-config** — registers the MCP server on startup. No CLI probing, no `mcp.json`, no readiness gate
+- ⬇️ **Local CLI install** — one command installs the CLI locally, pinned to the recommended **v1.5.0** — no admin rights, no PATH changes
 - 🛠️ **Command palette** — `Initialize Project` and `Force Re-index` right from VS Code, with progress and cancellation
 - 📜 **Output channel** — `init` and `sync` stream their output to the "CodeGraph" channel
 - 👆 **Status bar** — shows ready / not initialized / CLI not found / no workspace; click for the actions menu
@@ -48,13 +50,14 @@ The result: more accurate answers, fewer hallucinated APIs, and edits that actua
 | `CodeGraph: Restart MCP Server` | Re-publish the MCP definition so VS Code drops its cached connection |
 | `CodeGraph: Initialize Project` | Run `codegraph init` for the current workspace |
 | `CodeGraph: Force Re-index` | Run `codegraph sync` to re-index the project |
+| `CodeGraph: Install CLI v1.5.0 (Recommended)` | Install the CLI locally, pinned to the recommended v1.5.0 |
 | `CodeGraph: Show Menu` | Open the actions menu (same as clicking the status bar item) |
 
 Access via `Cmd+Shift+P` / `Ctrl+Shift+P`, or by clicking the status bar item.
 
 ## How It Works
 
-1. **Register MCP** — on startup, `vscode.lm.registerMcpServerDefinitionProvider` exposes `codegraph serve --mcp` to Copilot. VS Code inherits your shell's `PATH`, so spawning `codegraph` just works; `codegraph.path` overrides it
+1. **Register MCP** — on startup, `vscode.lm.registerMcpServerDefinitionProvider` exposes `codegraph serve --mcp` to Copilot. The CLI is resolved in this order: `codegraph.path` → the locally installed copy → `codegraph` on `PATH`
 2. **Report status** — `codegraph status --json` decides between *ready* and *not initialized*, falling back to the presence of `.codegraph/` if the CLI is unusable. A spawn failure surfaces as *CLI not found*, with a shortcut to the setting
 3. **Stay current** — status is re-checked after `init` / `sync` and when the workspace folder changes, and the MCP definition is re-published so stale connections are discarded
 
@@ -65,7 +68,13 @@ The daemon lifecycle belongs to `codegraph serve --mcp`, so the extension never 
 ### Prerequisites
 
 - VS Code ^1.106.0 with GitHub Copilot
-- [CodeGraph CLI](https://github.com/colbymchenry/codegraph): `npm install -g @colbymchenry/codegraph`
+- [CodeGraph CLI](https://github.com/colbymchenry/codegraph) — installed globally (`npm install -g @colbymchenry/codegraph`) or via the extension's built-in local install (see below)
+
+### Local CLI install (recommended)
+
+No terminal needed: run **CodeGraph: Install CLI v1.5.0 (Recommended)** from the command palette (or pick *Install CLI Locally* in the status-bar menu). The extension runs `npm install @colbymchenry/codegraph@1.5.0` into its own storage directory — no admin rights and no `PATH` changes — and automatically uses that copy for MCP and every command.
+
+**v1.5.0 is the recommended version**: it is the release this extension is built and tested against. The install picker also offers `Latest`, explicitly marked as not recommended. The installer needs [Node.js / npm](https://nodejs.org) on your machine.
 
 ### Install the Extension
 
@@ -133,7 +142,7 @@ vscode.lm.registerMcpServerDefinitionProvider("codegraph", {
 });
 ```
 
-CLI discovery is deliberately trivial: `codegraph.path` when set, otherwise the bare `codegraph` command resolved from the `PATH` VS Code inherits. Every invocation is a direct `child_process.spawn` with `shell: false`, so workspace paths and arguments are never re-interpreted by a shell.
+CLI discovery order: `codegraph.path` when set, then the locally installed copy (`<global storage>/cli`, installed by the `codegraph.installCli` command — pinned to v1.5.0, the recommended version), then the bare `codegraph` command resolved from the `PATH` VS Code inherits. Every invocation is a direct `child_process.spawn` with `shell: false`, so workspace paths and arguments are never re-interpreted by a shell.
 
 ### Building
 

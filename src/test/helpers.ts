@@ -30,3 +30,14 @@ export async function setCliPath(value: string | undefined): Promise<void> {
     .getConfiguration("codegraph")
     .update("path", value, vscode.ConfigurationTarget.Global);
 }
+
+/** Run `fn` with a temporary PATH, restoring the original afterwards. */
+export async function withPath(newPath: string, fn: () => void | Promise<void>): Promise<void> {
+  const original = process.env.PATH;
+  try {
+    process.env.PATH = newPath;
+    await fn();
+  } finally {
+    if (original === undefined) { delete process.env.PATH; } else { process.env.PATH = original; }
+  }
+}
